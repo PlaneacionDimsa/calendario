@@ -1093,7 +1093,7 @@ function openDayModal(dateStr) {
     const dataIdx = DATA.indexOf(op);
     const entregaHtml = op.entrega ? '<div style="font-size:11px;color:var(--muted);margin-top:4px;">Entrega: ' + fmtDate(op.entrega) + '</div>' : '';
     const calInicialHtml = (op._fromCalendar && op.cal_inicial && op.cal !== op.cal_inicial) ? '<div style="font-size:10px;color:var(--accent);margin-top:4px;">&#128204; Fecha inicial: ' + fmtDate(op.cal_inicial) + (masterMode ? '' : ' (bloqueada)') + '</div>' : '';
-    const locked = op._fromCalendar && op.cal_inicial && op.cal !== op.cal_inicial && !masterMode;
+    const locked = op._fromCalendar && op.cal_inicial && op.cal !== op.cal_inicial && !masterMode && !editUnlocked;
     const btnStyle = editUnlocked ? (locked ? 'display:inline-block;opacity:0.4;cursor:not-allowed;' : 'display:inline-block;') : 'display:none;';
     const btnExtra = locked ? 'disabled' : '';
     return '<div class="modal-op">'
@@ -2156,10 +2156,10 @@ function saveEditDate() {
   const newDate = document.getElementById('edit-date-input').value;
   if (!newDate) return;
 
-  // Block if cal_inicial is set and not master mode
+  // Allow move if either edit mode or master mode is active
   const rec = editingOp.dataIdx !== undefined ? DATA[editingOp.dataIdx] : null;
-  if (rec && rec._fromCalendar && rec.cal_inicial && rec.cal !== rec.cal_inicial && !masterMode) {
-    alert('Esta fecha fue registrada como fecha inicial y está bloqueada. Usa la contraseña maestra para moverla.');
+  if (rec && rec._fromCalendar && rec.cal_inicial && rec.cal !== rec.cal_inicial && !masterMode && !editUnlocked) {
+    alert('Esta fecha fue registrada como fecha inicial y está bloqueada. Usa la contraseña de edición o maestra para moverla.');
     return;
   }
 
